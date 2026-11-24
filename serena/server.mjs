@@ -1,4 +1,5 @@
 import http from "node:http";
+import { simulatedReportStore } from "./lib/report-demo.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -484,11 +485,16 @@ export async function createApp({
           end = url.searchParams.get("end") || "";
         if (start && end && start > end)
           fail(400, "El inicio debe ser anterior al final.");
-        const result = await report(db, {
+        const demo = url.searchParams.get("demo") === "true";
+        const result = await report(demo ? simulatedReportStore : db, {
           start,
           end,
-          demo: url.searchParams.get("demo") === "true",
+          demo,
         });
+        if (demo) {
+          send(200, { report: result });
+          return;
+        }
         const seconds = (performance.now() - started) / 1000;
         await db.tx(async (tx) => {
           await tx.put("measurements", {

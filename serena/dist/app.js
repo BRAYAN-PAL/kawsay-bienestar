@@ -233,8 +233,9 @@ function reports() {
     heading(
       "Resultados y mediciones",
       "Evidencia descriptiva según las dimensiones de tu investigación.",
-      button("report", "Actualizar comparativo"),
+      button("report", "Actualizar comparativo") + button("report-demo", "Ver datos simulados"),
     ) +
+    (r?.demo ? '<p class="notice demo">Datos simulados · Pretest: 2 al 8 de noviembre de 2026. Postest: 9 al 15 de noviembre de 2026. Las cifras ilustran el análisis.</p>' : "") +
     `<div class="filter-row"><label>Desde<input id="report-start" type="date" value="${reportStart}"></label><label>Hasta<input id="report-end" type="date" value="${reportEnd}"></label>${editable() ? button("manual", "+ Registro del pretest") + button("measure", "Registrar tiempo observado") : ""}</div>${
       r
         ? `<section class="panel"><div class="panel-head"><h2>Antes / después</h2>${button("report-export", "Exportar comparativo")}</div><div class="table-wrap"><table class="report-table"><thead><tr><th>Indicador</th><th class="num">Antes · Manual</th><th class="num">Después · Sistema</th><th class="num">Cambio</th></tr></thead><tbody>${reportLines(
@@ -387,11 +388,11 @@ function extra(title, html) {
 }
 const periodOptions =
   '<option value="pre">Antes · Manual</option><option value="post">Después · Sistema</option>';
-async function updateReport() {
+async function updateReport(demo = false) {
   lastReport = (
     await api(
       "/api/report?" +
-        new URLSearchParams({ start: reportStart, end: reportEnd }),
+        new URLSearchParams(demo ? { demo: "true" } : { start: reportStart, end: reportEnd }),
     )
   ).report;
   await load();
@@ -405,7 +406,8 @@ const actions = {
     await load();
     render();
   },
-  report: updateReport,
+  report: () => updateReport(),
+  "report-demo": () => updateReport(true),
   "use-ai": () =>
     appointment(
       null,
@@ -509,10 +511,11 @@ const actions = {
   "report-export": () => {
     if (!lastReport) return;
     download(
-      "kawsay-resultados.csv",
+      lastReport.demo ? "kawsay-resultados-simulados.csv" : "kawsay-resultados.csv",
       toCSV([
-        ["Periodo inicial", reportStart || "Sin límite"],
-        ["Periodo final", reportEnd || "Sin límite"],
+        ["Origen", lastReport.demo ? "Datos simulados" : "Registros del sistema"],
+        ["Periodo inicial", lastReport.demo ? "2 al 8 de noviembre de 2026" : lastReport.start || "Sin límite"],
+        ["Periodo final", lastReport.demo ? "9 al 15 de noviembre de 2026" : lastReport.end || "Sin límite"],
         ["Indicador", "Antes", "Después", "Cambio"],
         ...reportLines(lastReport).map(([l, a, b, t]) => [
           l,
