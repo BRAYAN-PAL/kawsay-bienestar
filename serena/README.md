@@ -28,7 +28,7 @@ El adaptador recomendado usa la Data API sin compartir la contraseña administra
 
 Genera un secreto aleatorio largo para `KAWSAY_DB_SECRET`. Inserta **su hash SHA-256**, nunca el secreto original, en `kawsay_private.control(id,revision,secret_hash)` con id=1 y revision=0. Configura `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` y `KAWSAY_DB_SECRET` en el servidor. El secreto no se incluye en frontend ni GitHub.
 
-La RPC aplica revisión y bloqueo transaccional; el adaptador reintenta conflictos. Usa documentos JSONB y carga colecciones completas para este piloto de una sucursal. Para grandes volúmenes se requiere paginar y normalizar.
+La RPC aplica revisión y bloqueo transaccional; el adaptador reintenta conflictos. La RPC está revocada para visitantes y usuarios de Supabase Auth. El servidor la alcanza mediante la Edge Function `supabase/functions/kawsay-gateway/index.ts`, que valida el hash del secreto y usa la credencial de servicio interna de Supabase. Despliega esa función sustituyendo el marcador por el hash SHA-256 del secreto, o configura `KAWSAY_GATEWAY_SECRET_SHA256` en sus secretos. El JWT de plataforma queda desactivado porque la función realiza su propia autenticación; una llamada sin el secreto se rechaza antes de consultar la base. Usa documentos JSONB y carga colecciones completas para este piloto de una sucursal. Para grandes volúmenes se requiere paginar y normalizar.
 
 Alternativa: `DATABASE_URL` de Supabase con pooler y TLS. Ese adaptador crea tablas `kawsay_*` con RLS. No mezcles adaptadores en un despliegue: usan estructuras separadas.
 

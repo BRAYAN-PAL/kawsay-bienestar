@@ -45,5 +45,5 @@ BEGIN
  RETURN jsonb_build_object('revision',control_row.revision,'documents',payload);
 END;
 $$;
-REVOKE ALL ON FUNCTION public.kawsay_gateway(text,bigint,jsonb) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.kawsay_gateway(text,bigint,jsonb) TO anon;
+REVOKE ALL ON FUNCTION public.kawsay_gateway(text,bigint,jsonb) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.kawsay_gateway(text,bigint,jsonb) TO service_role;

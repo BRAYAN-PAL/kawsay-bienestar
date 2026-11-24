@@ -110,7 +110,7 @@ export async function parseRequest(text, config, fetcher = fetch) {
   }
   if (!result || !["reservar", "consultar", "otro"].includes(result.intent))
     fail(502, "Respuesta de IA no válida.");
-  return {
+  const proposal = {
     intent: result.intent,
     date: /^\d{4}-\d{2}-\d{2}$/.test(result.date || "") ? result.date : null,
     time: /^([01]\d|2[0-3]):[0-5]\d$/.test(result.time || "")
@@ -119,8 +119,19 @@ export async function parseRequest(text, config, fetcher = fetch) {
     service: config.services.some((s) => s.name === result.service)
       ? result.service
       : null,
-    note: String(result.note || "").slice(0, 500),
+    note: "",
   };
+  const missing = [
+    ["date", "fecha"],
+    ["time", "hora"],
+    ["service", "tratamiento"],
+  ]
+    .filter(([key]) => !proposal[key])
+    .map(([, label]) => label);
+  proposal.note = missing.length
+    ? `Falta precisar: ${missing.join(", ")}. Completa estos datos antes de reservar.`
+    : "Revisa la propuesta. La disponibilidad se valida al guardar la cita.";
+  return proposal;
 }
 export function reminderText(a, config) {
   return `Hola, ${a.name}. ${config.name} te recuerda tu cita de ${a.service} para el ${a.date} a las ${a.time} (${a.duration} minutos), en ${config.district}. Confirma tu asistencia o solicita una reprogramación. Gracias.`;

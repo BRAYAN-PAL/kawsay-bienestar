@@ -91,7 +91,7 @@ export function toCSV(rows) {
             (v) =>
               '"' +
               String(v ?? "")
-                .replace(/^[=+@\-\t\r]/, "'$&")
+                .replace(/^(?:[\u0000-\u0020]*[=+@\-]|[\t\r\n])/, "'$&")
                 .replaceAll('"', '""') +
               '"',
           )

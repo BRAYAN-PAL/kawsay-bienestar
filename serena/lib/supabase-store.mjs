@@ -13,11 +13,15 @@ const tables = [
 export async function supabaseStore({ url, key, secret }) {
   async function request(body) {
     const r = await fetch(
-      url.replace(/\/$/, "") + "/rest/v1/rpc/kawsay_gateway",
+      url.replace(/\/$/, "") + "/functions/v1/kawsay-gateway",
       {
         method: "POST",
-        headers: { apikey: key, "Content-Type": "application/json" },
-        body: JSON.stringify({ secret, ...body }),
+        headers: {
+          apikey: key,
+          "Content-Type": "application/json",
+          "X-Kawsay-Gateway": secret,
+        },
+        body: JSON.stringify(body),
         signal: AbortSignal.timeout(20000),
       },
     );
