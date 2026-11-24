@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#edf2f0" />
+    <title>Kawsay Bienestar · Gestión de citas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="signed-out">
+    <aside id="sidebar">
+      <a class="brand" href="#agenda"
+        ><svg viewBox="0 0 32 32" aria-hidden="true">
+          <path
+            d="M16 27C4 21 3 9 6 5c7 0 12 7 10 22ZM16 27C28 21 29 9 26 5c-7 0-12 7-10 22Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          /></svg
+        ><span
+          >kawsay<span class="brand-sub">Bienestar en Los Olivos</span></span
+        ></a
+      >
+      <div class="location">
+        Los Olivos, Lima<span>Gestión de la sucursal</span>
+      </div>
+      <nav aria-label="Principal">
+        <a href="#agenda" data-page="agenda">Agenda de citas</a
+        ><a href="#clients" data-page="clients">Clientes</a
+        ><a href="#reminders" data-page="reminders">WhatsApp y flujos</a
+        ><a href="#ai" data-page="ai">Asistente de reservas</a
+        ><a href="#reports" data-page="reports">Resultados y mediciones</a
+        ><a href="#activity" data-page="activity">Auditoría e incidentes</a
+        ><a href="#settings" data-page="settings">Configuración</a
+        ><a href="reservar" target="_blank" rel="noopener"
+          >Portal de reservas</a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <div id="user-name">Sesión protegida</div>
+        <button id="logout">Salir</button>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <button id="menu" aria-label="Abrir navegación" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+            <path
+              d="M3 5h14M3 10h14M3 15h14"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg></button
+        ><span id="center-name">Kawsay Bienestar</span
+        ><span class="local-indicator" id="connection"
+          >Conectando al servidor…</span
+        >
+      </header>
+      <main id="main"><div class="empty">Cargando el sistema…</div></main>
+      <footer>
+        Kawsay Bienestar · Los Olivos, Perú<span
+          >Reservas, automatización y gestión de riesgos</span
+        >
+      </footer>
+    </div>
+    <dialog id="appointment">
+      <form id="appointment-form">
+        <div class="dialog-head">
+          <div>
+            <h2 id="form-title">Nueva cita</h2>
+            <p>Los horarios se validan en el servidor.</p>
+          </div>
+          <button
+            type="button"
+            class="icon-close"
+            data-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <input type="hidden" name="id" /><input type="hidden" name="version" />
+        <div class="form-grid">
+          <label class="wide"
+            >Nombre y apellidos<input
+              name="name"
+              required
+              maxlength="90"
+              autocomplete="name" /></label
+          ><label class="wide"
+            >Celular peruano<input
+              name="contact"
+              required
+              type="tel"
+              placeholder="987 654 321"
+              maxlength="18"
+              autocomplete="tel" /></label
+          ><label>Fecha<input type="date" name="date" required /></label
+          ><label
+            >Hora<input type="time" name="time" required step="900" /></label
+          ><label>Tratamiento<select name="service"></select></label
+          ><label
+            >Duración (minutos)<input
+              type="number"
+              name="duration"
+              min="15"
+              max="120"
+              required
+              value="30" /></label
+          ><label>Equipo<select name="equipment"></select></label
+          ><label>Estado<select name="status"></select></label
+          ><label class="wide"
+            >Periodo de medición<select name="phase">
+              <option value="post">Después · Sistema</option>
+              <option value="pre">Antes · Agenda manual</option>
+            </select></label
+          ><label class="check wide"
+            ><input type="checkbox" name="error" /> Error en el registro
+            original</label
+          ><label class="check wide"
+            ><input type="checkbox" name="duplicate" /> Duplicado en el registro
+            original (pretest)</label
+          ><label class="check wide"
+            ><input type="checkbox" name="followup" checked /> Información de
+            seguimiento completa</label
+          ><label class="check wide"
+            ><input type="checkbox" name="consent" /> Cliente autorizó mensajes
+            sobre su cita</label
+          >
+        </div>
+        <p id="form-error" class="form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" data-close>Cancelar</button
+          ><button class="primary" type="submit">Guardar cita</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="message">
+      <div class="dialog-head">
+        <div>
+          <h2>WhatsApp de la cita</h2>
+          <p>El enlace abre WhatsApp. Tú realizas el envío.</p>
+        </div>
+        <button class="icon-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <textarea
+        id="message-text"
+        rows="6"
+        aria-label="Texto del recordatorio"
+      ></textarea>
+      <div class="dialog-actions">
+        <button id="copy-message">Copiar</button
+        ><a
+          class="button primary"
+          id="whatsapp-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Abrir WhatsApp</a
+        >
+      </div>
+    </dialog>
+    <dialog id="extra">
+      <div class="dialog-head">
+        <h2 id="extra-title"></h2>
+        <button class="icon-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div id="extra-body"></div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: kawsay-bienestar
+    runtime: node
+    plan: free
+    rootDir: serena
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: AI_PROVIDER
+        value: bridge
+      - key: WHATSAPP_ENABLED
+        value: "false"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: KAWSAY_DB_SECRET
+        sync: false
+      - key: AUDIT_SECRET
+        generateValue: true
+      - key: BOOTSTRAP_TOKEN
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true
+      - key: AI_BRIDGE_SECRET
+        sync: false
+      - key: APP_URL
+        sync: false
