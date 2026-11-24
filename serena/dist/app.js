@@ -183,6 +183,16 @@ function reminders() {
     }<div class="table-head"><h2>Citas pendientes de atención</h2></div>${table(state.rows.filter((a) => a.phase === "post" && ["Pendiente", "Confirmada"].includes(a.status)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)))}`
   );
 }
+function providerLabel() {
+  const ai = state.integrations.ai;
+  return (
+    (ai.provider === "nvidia"
+      ? ai.configured
+        ? "NVIDIA · "
+        : "NVIDIA: falta configurar la clave · "
+      : "IA · ") + esc(ai.model)
+  );
+}
 function ai() {
   const online =
     state.integrations.ai.provider !== "bridge" ||
@@ -192,7 +202,7 @@ function ai() {
       "Asistente de reservas",
       "Convierte una solicitud en una propuesta de cita que tú revisas.",
     ) +
-    `<div class="notice"><span>${state.integrations.ai.provider === "disabled" ? "IA pendiente de configuración." : state.integrations.ai.provider === "bridge" ? (online ? "Ollama conectado desde tu PC. No se abre el puerto de Ollama a internet." : "Esperando el enlace de Ollama. Enciende tu PC y ejecuta el enlace de IA.") : "Ollama local · " + esc(state.integrations.ai.model)} La IA no confirma reservas ni cambia citas por sí sola.</span></div><div class="grid"><section class="panel"><form id="ai-form" class="stack"><label>Solicitud del cliente<textarea name="text" rows="6" maxlength="2000" required placeholder="Quiero un masaje térmico mañana a las 10 de la mañana.">${esc(aiText)}</textarea></label><small>Escribe solo los detalles de la reserva. No incluyas datos clínicos.</small><button class="primary">Interpretar solicitud</button><p class="form-error" id="ai-error" role="alert"></p></form></section><section class="panel"><h2>Propuesta para revisar</h2>${aiResult ? `<dl class="details"><dt>Intención</dt><dd>${esc(aiResult.intent)}</dd><dt>Fecha</dt><dd>${esc(aiResult.date || "Por definir")}</dd><dt>Hora</dt><dd>${esc(aiResult.time || "Por definir")}</dd><dt>Tratamiento</dt><dd>${esc(aiResult.service || "Por definir")}</dd></dl><p>${esc(aiResult.note)}</p>${button("use-ai", "Revisar y completar cita")}` : "<p>La interpretación aparecerá aquí. Los datos faltantes se muestran sin inventarlos.</p>"}</section></div>`
+    `<div class="notice"><span>${state.integrations.ai.provider === "disabled" ? "IA pendiente de configuración." : state.integrations.ai.provider === "bridge" ? (online ? "Ollama conectado desde tu PC. No se abre el puerto de Ollama a internet." : "Esperando el enlace de Ollama. Enciende tu PC y ejecuta el enlace de IA.") : providerLabel()} La IA no confirma reservas ni cambia citas por sí sola.</span></div><div class="grid"><section class="panel"><form id="ai-form" class="stack"><label>Solicitud del cliente<textarea name="text" rows="6" maxlength="2000" required placeholder="Quiero un masaje térmico mañana a las 10 de la mañana.">${esc(aiText)}</textarea></label><small>Escribe solo los detalles de la reserva. No incluyas datos clínicos.</small><button class="primary">Interpretar solicitud</button><p class="form-error" id="ai-error" role="alert"></p></form></section><section class="panel"><h2>Propuesta para revisar</h2>${aiResult ? `<dl class="details"><dt>Intención</dt><dd>${esc(aiResult.intent)}</dd><dt>Fecha</dt><dd>${esc(aiResult.date || "Por definir")}</dd><dt>Hora</dt><dd>${esc(aiResult.time || "Por definir")}</dd><dt>Tratamiento</dt><dd>${esc(aiResult.service || "Por definir")}</dd></dl><p>${esc(aiResult.note)}</p>${button("use-ai", "Revisar y completar cita")}` : "<p>La interpretación aparecerá aquí. Los datos faltantes se muestran sin inventarlos.</p>"}</section></div>`
   );
 }
 function diff(a, b, type) {

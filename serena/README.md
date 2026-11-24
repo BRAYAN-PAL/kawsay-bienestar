@@ -38,7 +38,13 @@ Alternativa: `DATABASE_URL` de Supabase con pooler y TLS. Ese adaptador crea tab
 
 GitHub conserva el código; GitHub Pages no ejecuta este backend. El plan gratuito de Render puede suspenderse por inactividad y no garantiza la puntualidad de recordatorios. Operación continua requiere un servicio siempre activo o ejecutor independiente. No se contrató un plan pagado. `worker.mjs` ejecuta un ciclo; `/api/cron` lo dispara usando `CRON_SECRET`.
 
-## Ollama local y Render
+## NVIDIA NIM (proveedor elegido)
+
+Configura en Render `AI_PROVIDER=nvidia`, `NVIDIA_MODEL=nvidia/nemotron-3.5-lightning-30b-a3b` y `NVIDIA_API_KEY` con tu clave privada. No la envíes por el chat ni la subas al repositorio. El servidor usa Chat Completions de NVIDIA, salida JSON estructurada y razonamiento desactivado para la extracción de citas. Controla límites HTTP 429 y salidas incompletas. El nivel gratuito es para prototipos y está sujeto a la disponibilidad y límites de NVIDIA. No necesita que esta PC esté encendida.
+
+La integración se prueba con respuestas simuladas hasta incorporar una clave válida; eso no demuestra disponibilidad ni latencia real del endpoint. La propuesta siempre se revisa antes de guardar.
+
+## Ollama local y Render (alternativa desactivada)
 
 Modelo previsto: `qwen2.5:3b` (aproximadamente 1.9 GB). Descárgalo con `ollama pull qwen2.5:3b`.
 
